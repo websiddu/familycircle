@@ -18,6 +18,8 @@ module.exports = function (grunt) {
     useminPrepare: 'grunt-usemin'
   });
 
+  grunt.loadNpmTasks('grunt-ftpush');
+
   // Configurable paths
   var config = {
     app: 'app',
@@ -348,6 +350,20 @@ module.exports = function (grunt) {
       }
     },
 
+    'ftpush': {
+      build: {
+        auth: {
+          host: 'ftp.diamondesigners.com',
+          port: 21,
+          authKey: 'dd'
+        },
+        src: '<%= config.dist %>',
+        dest: 'myworks/familycircle/',
+        exclusions: ['<%= config.dist %>/.git', '<%= config.dist %>/resources', '<%= config.dist %>/**/.DS_Store', '<%= config.dist %>/**/Thumbs.db', '<%= config.dist %>/tmp']
+      }
+    },
+
+
     // Generates a custom Modernizr build that includes only the tests you
     // reference in your app
     modernizr: {
@@ -422,7 +438,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'wiredep',
+    //'wiredep',
     'useminPrepare',
     'concurrent:dist',
     'postcss',
@@ -431,10 +447,13 @@ module.exports = function (grunt) {
     'uglify',
     'copy:dist',
     'modernizr',
-    'filerev',
+    //'filerev',
     'usemin',
     'htmlmin'
   ]);
+
+  grunt.registerTask('deploy', ['build', 'ftpush']);
+
 
   grunt.registerTask('default', [
     'newer:eslint',
